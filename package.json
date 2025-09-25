@@ -1,0 +1,45 @@
+{
+  "name": "mehroj-portfolio",
+  "version": "1.0.0",
+  "description": "Modern portfolio website for Mehroj - Creative Developer & Digital Innovator",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx live-server --port=8080 --host=localhost --open=/",
+    "dev": "npx live-server --port=3000 --host=localhost --open=/ --watch=css,js",
+    "build": "echo 'Static site - no build process needed'",
+    "deploy": "git add . && git commit -m 'Deploy updates' && git push origin main",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "portfolio",
+    "website",
+    "html",
+    "css",
+    "javascript",
+    "tailwind",
+    "responsive",
+    "modern"
+  ],
+  "author": {
+    "name": "Mehroj",
+    "email": "mehroj@example.com",
+    "url": "https://mehroj-r.github.io"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mehroj-r/mehroj-r.github.io.git"
+  },
+  "homepage": "https://mehroj-r.github.io",
+  "devDependencies": {
+    "live-server": "^1.2.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
