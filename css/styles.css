@@ -54,6 +54,12 @@
     }
 }
 
+/* Cursor blink animation */
+@keyframes blink-caret {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+}
+
 /* Custom utility classes */
 .animate-fade-in-up {
     animation: fadeInUp 0.6s ease-out forwards;
@@ -73,6 +79,19 @@
 
 .animate-background-pulse {
     animation: backgroundPulse 4s ease-in-out infinite;
+}
+
+/* Removed the old typewriter implementation */
+
+/* Tech icons */
+.tech-icon {
+    transition: all 0.3s ease;
+}
+
+.tech-icon:hover {
+    transform: translateY(-5px);
+    color: rgb(216, 180, 254);
+    box-shadow: 0 5px 15px rgba(147, 51, 234, 0.25);
 }
 
 /* Enhanced scrollbar with purple theme */
@@ -104,6 +123,30 @@
 ::-moz-selection {
     background-color: rgba(147, 51, 234, 0.3);
     color: white;
+}
+
+/* Cursor styling for typing effect */
+.cursor {
+    display: inline-block;
+    width: 3px;
+    background-color: #a855f7;
+    animation: blink-caret 0.75s step-end infinite;
+    margin-left: 2px;
+    height: 1.2em;
+    position: relative;
+    top: 2px;
+}
+
+.typewriter .cursor {
+    display: inline-block;
+    margin-left: 2px;
+    width: 2px;
+    height: 1.2em;
+    background-color: #a855f7;
+    animation: blink-caret 0.75s step-end infinite;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
 }
 
 /* Enhanced focus states */

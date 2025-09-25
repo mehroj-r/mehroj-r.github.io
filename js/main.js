@@ -10,6 +10,7 @@ class PortfolioApp {
         this.setupNavigation();
         this.setupTypingEffect();
         this.setupParallaxEffect();
+        this.setupTechStackInteractions(); // New method for tech stack icons
     }
 
     setupEventListeners() {
@@ -91,9 +92,9 @@ class PortfolioApp {
         });
 
         navLinks.forEach(link => {
-            link.classList.remove('text-blue-400', 'active');
+            link.classList.remove('text-purple-400', 'active');
             if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('text-blue-400', 'active');
+                link.classList.add('text-purple-400', 'active');
             }
         });
     }
@@ -131,6 +132,21 @@ class PortfolioApp {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     this.animateElement(entry.target);
+
+                    // If this is a project card, apply staggered animation to siblings
+                    if (entry.target.classList.contains('project-card')) {
+                        const parent = entry.target.parentElement;
+                        const siblings = Array.from(parent.children);
+                        const index = siblings.indexOf(entry.target);
+
+                        siblings.forEach((sibling, i) => {
+                            if (i > index) {
+                                setTimeout(() => {
+                                    this.animateElement(sibling);
+                                }, (i - index) * 150);
+                            }
+                        });
+                    }
                 }
             });
         }, observerOptions);
@@ -144,9 +160,13 @@ class PortfolioApp {
     }
 
     animateElement(element) {
+        // Check if already animated
+        if (element.classList.contains('animated')) return;
+
         element.style.opacity = '1';
         element.style.transform = 'translateY(0)';
         element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+        element.classList.add('animated');
     }
 
     setupProjectCardEffects() {
@@ -175,84 +195,131 @@ class PortfolioApp {
     }
 
     setupTypingEffect() {
-        const subtitle = document.querySelector('section#home p');
-        if (!subtitle) return;
+        // Find the typewriter element
+        const typewriterElement = document.querySelector('.typewriter');
+        if (!typewriterElement) return;
 
-        const text = 'Creative Developer & Digital Innovator';
-        let i = 0;
+        // List of phrases to cycle through
+        const phrases = [
+            'Building robust APIs and scalable backend systems',
+            'Creating secure authentication and authorization',
+            'Designing efficient database schemas',
+            'Developing RESTful web services'
+        ];
 
-        const typeWriter = () => {
-            if (i < text.length) {
-                subtitle.innerHTML = text.substring(0, i + 1) + '<span class="animate-pulse">|</span>';
-                i++;
-                setTimeout(typeWriter, 100);
+        // Set initial state and starting phrase
+        let currentPhraseIndex = 0;
+        let currentCharIndex = 0;
+        let isDeleting = false;
+
+        // Save the original text as first phrase if needed
+        const originalText = typewriterElement.textContent.trim();
+        if (originalText && !phrases.includes(originalText)) {
+            phrases.unshift(originalText);
+        }
+
+        // Clear initial content
+        typewriterElement.innerHTML = '<span class="text-content"></span><span class="cursor">|</span>';
+        const textContent = typewriterElement.querySelector('.text-content');
+
+        // Function to type and delete text
+        function typeAndDelete() {
+            // Get current phrase
+            const currentPhrase = phrases[currentPhraseIndex];
+
+            // Set the text content based on whether we're typing or deleting
+            if (isDeleting) {
+                textContent.textContent = currentPhrase.substring(0, currentCharIndex - 1);
+                currentCharIndex--;
             } else {
-                subtitle.innerHTML = text;
+                textContent.textContent = currentPhrase.substring(0, currentCharIndex + 1);
+                currentCharIndex++;
             }
-        };
 
-        // Start typing effect after initial animation
-        setTimeout(() => {
-            subtitle.innerHTML = '';
-            typeWriter();
-        }, 1500);
+            // Calculate typing speed (faster for deleting)
+            let typingSpeed = isDeleting ? 50 : 100;
+
+            // If we've finished typing the full phrase
+            if (!isDeleting && currentCharIndex === currentPhrase.length) {
+                // Pause at the end before starting to delete
+                typingSpeed = 1500;
+                isDeleting = true;
+            }
+            // If we've deleted the entire phrase
+            else if (isDeleting && currentCharIndex === 0) {
+                isDeleting = false;
+                // Move to next phrase
+                currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+                // Pause before starting new phrase
+                typingSpeed = 500;
+            }
+
+            // Continue the typing/deleting loop
+            setTimeout(typeAndDelete, typingSpeed);
+        }
+
+        // Start the typing effect after a short delay
+        setTimeout(typeAndDelete, 1000);
     }
 
     setupParallaxEffect() {
         window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const shapes = document.querySelectorAll('.animate-float');
+            const scrollY = window.scrollY;
 
-            shapes.forEach((shape, index) => {
-                const rate = scrolled * -0.5 * (index + 1);
-                shape.style.transform = `translateY(${rate}px)`;
+            // Parallax for hero section background elements
+            document.querySelectorAll('#home .absolute.blur-3xl, #home .absolute.blur-2xl').forEach((element, index) => {
+                const speed = 0.1 + (index * 0.05);
+                const yPos = scrollY * speed;
+                element.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+    }
+
+    // New method for tech stack interactions
+    setupTechStackInteractions() {
+        const techIcons = document.querySelectorAll('.tech-icon');
+
+        techIcons.forEach((icon, index) => {
+            // Add staggered entrance animation
+            setTimeout(() => {
+                icon.style.opacity = '1';
+                icon.style.transform = 'translateY(0)';
+            }, 1500 + (index * 150));
+
+            // Add hover effects
+            icon.addEventListener('mouseenter', () => {
+                icon.classList.add('animate-pulse');
+
+                // Create a subtle ripple effect
+                const ripple = document.createElement('div');
+                ripple.className = 'absolute inset-0 rounded-lg';
+                ripple.style.background = 'radial-gradient(circle, rgba(147, 51, 234, 0.3) 0%, rgba(0, 0, 0, 0) 70%)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.opacity = '0';
+                ripple.style.transition = 'all 0.6s ease-out';
+
+                icon.style.position = 'relative';
+                icon.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.style.transform = 'scale(1.5)';
+                    ripple.style.opacity = '1';
+                }, 10);
+
+                setTimeout(() => {
+                    ripple.style.opacity = '0';
+                    setTimeout(() => ripple.remove(), 600);
+                }, 600);
+            });
+
+            icon.addEventListener('mouseleave', () => {
+                icon.classList.remove('animate-pulse');
             });
         });
     }
 }
 
-// Utility functions
-const Utils = {
-    // Debounce function for performance optimization
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    },
-
-    // Throttle function for scroll events
-    throttle(func, limit) {
-        let inThrottle;
-        return function() {
-            const args = arguments;
-            const context = this;
-            if (!inThrottle) {
-                func.apply(context, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
-            }
-        };
-    },
-
-    // Check if element is in viewport
-    isInViewport(element) {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-    }
-};
-
-// Initialize the application when DOM is loaded
+// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
     new PortfolioApp();
 });
