@@ -4,11 +4,8 @@
   "description": "Modern portfolio website for Mehroj - Creative Developer & Digital Innovator",
   "main": "index.html",
   "scripts": {
-    "start": "npx live-server --port=8080 --host=localhost --open=/",
     "dev": "npx live-server --port=3000 --host=localhost --open=/ --watch=css,js",
-    "build": "echo 'Static site - no build process needed'",
-    "deploy": "git add . && git commit -m 'Deploy updates' && git push origin main",
-    "serve": "python3 -m http.server 8000"
+    "prod": "npx live-server --port=5000 --host=localhost"
   },
   "keywords": [
     "portfolio",
